@@ -2,6 +2,7 @@
 
 namespace App\Transformers;
 
+use App\Models\Category;
 use App\Models\News;
 use League\Fractal\TransformerAbstract;
 
@@ -13,7 +14,8 @@ class NewsTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-        //
+        'category',
+        'author'
     ];
 
     /**
@@ -40,5 +42,15 @@ class NewsTransformer extends TransformerAbstract
             'text' => $news->text,
             'head_image' => $news->head_image
         ];
+    }
+
+    public function includeCategory(News $news): \League\Fractal\Resource\Item
+    {
+        return $this->item($news->category, new CategoryTransformer(), 'category');
+    }
+
+    public function includeAuthor(News $news): \League\Fractal\Resource\Item
+    {
+        return $this->item($news->user, new UserTransformer(), 'user');
     }
 }
