@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @property int $id
  * @property string $name
  */
 class Category extends Model
@@ -15,6 +16,8 @@ class Category extends Model
     protected $fillable = [
         'name'
     ];
+
+    public $timestamps = false;
 
     public function news()
     {

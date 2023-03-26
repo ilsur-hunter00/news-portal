@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\NewsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +26,9 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::prefix('news')->group(function () {
-        Route::get('/', [\App\Http\Controllers\NewsController::class]);
+        Route::get('/', [NewsController::class, 'index']);
+    });
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index']);
     });
 });
