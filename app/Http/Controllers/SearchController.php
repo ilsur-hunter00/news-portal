@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Services\NewsService;
 use App\Transformers\NewsTransformer;
+use App\Transformers\SearchTransformer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Serializer\JsonApiSerializer;
 
-class NewsController extends Controller
+class SearchController extends Controller
 {
     /**
      * @var NewsService
@@ -17,18 +18,18 @@ class NewsController extends Controller
     protected NewsService $newsService;
 
     /**
-     * @var NewsTransformer
+     * @var SearchTransformer
      */
-    private NewsTransformer $newsTransformer;
+    private SearchTransformer $searchTransformer;
 
     /**
      * @param NewsService $newsService
-     * @param NewsTransformer $newsTransformer
+     * @param SearchTransformer $searchTransformer
      */
-    public function __construct(NewsService $newsService, NewsTransformer $newsTransformer)
+    public function __construct(NewsService $newsService, SearchTransformer $searchTransformer)
     {
         $this->newsService = $newsService;
-        $this->newsTransformer = $newsTransformer;
+        $this->searchTransformer = $searchTransformer;
     }
 
     /**
@@ -37,31 +38,13 @@ class NewsController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $news = $this->newsService->getNews($request->all());
+        $news = $this->newsService->searchNews($request->all());
 
         $data = fractal()
             ->collection($news)
-            ->transformWith($this->newsTransformer)
+            ->transformWith($this->searchTransformer)
             ->serializeWith(new JsonApiSerializer())
             ->paginateWith(new IlluminatePaginatorAdapter($news))
-            ->withResourceName('news')
-            ->toArray();
-
-        return response()->json($data);
-    }
-
-    /**
-     * @param int $news_id
-     * @return JsonResponse
-     */
-    public function show(int $news_id): JsonResponse
-    {
-        $news = $this->newsService->showNews($news_id);
-
-        $data = fractal()
-            ->item($news)
-            ->transformWith($this->newsTransformer)
-            ->serializeWith(new JsonApiSerializer())
             ->withResourceName('news')
             ->toArray();
 
